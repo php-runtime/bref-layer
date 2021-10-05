@@ -38,6 +38,15 @@ functions:
 You will use the same layer for console applications, PSR-11, PSR-15, Laravel or
 Symfony applications. Anything the Runtime component supports.
 
+## Available layers
+
+These are the available layers:
+
+- ${runtime-bref:php-81}
+- ${runtime-bref:php-80}
+- ${runtime-bref:php-74}
+- ${runtime-bref:php-73}
+
 ## FAQ
 
 #### Can I use custom php extensions?
