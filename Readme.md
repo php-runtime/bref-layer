@@ -42,10 +42,10 @@ Symfony applications. Anything the Runtime component supports.
 
 These are the available layers:
 
-- ${runtime-bref:php-81}
-- ${runtime-bref:php-80}
-- ${runtime-bref:php-74}
-- ${runtime-bref:php-73}
+- `${runtime-bref:php-81}`
+- `${runtime-bref:php-80}`
+- `${runtime-bref:php-74}`
+- `${runtime-bref:php-73}`
 
 ## FAQ
 
