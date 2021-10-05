@@ -5,6 +5,20 @@ set -e
 
 LAMBDA_ARGV=(${_HANDLER//:/ })
 
+#
+# If LAMBDA_ARGV[0] refers to something that is not a file, then we
+# assume it is a PHP class and you want to use a PSR-11 container to
+# get an object of that class.
+# The file in environment variable FALLBACK_CONTAINER_FILE should
+# return the PSR-11 container for us.
+#
+# See more at https://github.com/php-runtime/bref
+#
+
+if [[ ! -f "${LAMBDA_ARGV[0]}" && "${_HANDLER}" != *":"* && ! -z "${FALLBACK_CONTAINER_FILE}" ]]; then
+    LAMBDA_ARGV[0]="${FALLBACK_CONTAINER_FILE}"
+fi
+
 while true
 do
     # We redirect stderr to stdout so that everything
