@@ -1,0 +1,62 @@
+name: Watch for changes
+
+on:
+  schedule:
+    - cron: '0 0,6,12,18 * * *'
+
+jobs:
+  bref:
+    name: Update to latest Bref
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.0
+          coverage: none
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Get last version
+        id: fetch_version
+        run: .github/workflows/bin/refresh
+
+      - name: Download dependencies
+        if: ${{ steps.fetch_version.outputs.last != 'same' }}
+        uses: ramsey/composer-install@v1
+
+      - name: Build images with latest version
+        if: ${{ steps.fetch_version.outputs.last != 'same' }}
+        run: |
+          make layers
+          make test
+
+      - name: Publish layers
+        if: ${{ steps.fetch_version.outputs.last != 'same' }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET }}
+        run: |
+          php ./bref-layer publish
+          php ./bref-layer list
+
+      - name: Commit changes
+        if: ${{ steps.fetch_version.outputs.last != 'same' }}
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add layers.json config.json
+          git commit -m "Updated to Bref ${{ steps.fetch_version.outputs.last }}"
+
+      - name: Push changes
+        if: ${{ steps.fetch_version.outputs.last != 'same' }}
+        run: |
+          git push origin main
+          git tag -a ${{ steps.fetch_version.outputs.last }} -m "Bref ${{ steps.fetch_version.outputs.last }}"
+          git push origin ${{ steps.fetch_version.outputs.last }}
+

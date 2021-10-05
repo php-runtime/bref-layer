@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+    paths:
+      - layers/**
+
+jobs:
+  matrix:
+    name: Find layers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Fetch master from where the PR started
+        run: git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+
+      - name: Find layers
+        id: find-layers
+        run: echo "::set-output name=list::$(git diff --name-only origin/${{ github.base_ref }} HEAD | grep layers/ | cut -d / -f 2 | sort | uniq | jq -R -s -c 'split("\n")[:-1]')"
+
+    outputs:
+      # Make the outputs accessible outside this job
+      list: ${{ steps.find-layers.outputs.list }}
+
+  build:
+    needs: matrix
+    name: Build and test layer
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: '1'
+    strategy:
+      fail-fast: false
+      matrix:
+        layer: ${{ fromJson(needs.matrix.outputs.list) }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build docker images
+        run: layer=${{ matrix.layer }} make docker-images
+
+      - name: Test images
+        run: layer=${{ matrix.layer }} make test

@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+require __DIR__.'/vendor/autoload.php';
+
+$app = new Runtime\BrefLayer\Application();
+$app->command('publish', \Runtime\BrefLayer\Command\PublishCommand::class)->descriptions('Publish new layers.');
+$app->command('list', \Runtime\BrefLayer\Command\ListCommand::class)->descriptions('Create layer.json');
+$app->command('help', \Runtime\BrefLayer\Command\HelpCommand::class)->descriptions('Prints some help texts.');
+
+$app->setDefaultCommand('help');
+
+$app->run();

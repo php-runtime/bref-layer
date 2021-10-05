@@ -1,0 +1,27 @@
+{
+    "name": "runtime/bref-layer",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nyholm",
+            "email": "tobias.nyholm@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "symfony/process": "^5.2",
+        "symfony/finder": "^5.2",
+        "mnapoli/silly": "^1.7",
+        "mnapoli/silly-php-di": "^1.2",
+        "async-aws/core": "^1.7",
+        "symfony/http-client": "^5.3",
+        "async-aws/lambda": "^1.1",
+        "bref/logger": "^1.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Runtime\\BrefLayer\\": "src/"
+        }
+    }
+}

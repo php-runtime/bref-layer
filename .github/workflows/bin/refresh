@@ -1,0 +1,44 @@
+#!/usr/bin/env php
+<?php
+
+$rootDir = __DIR__ . '/../../..';
+if (!file_exists($rootDir . '/config.json')) {
+    echo "Unable to find the `config.json` script in `../../..`.\n";
+    exit(1);
+}
+
+function console_log(string $message): void
+{
+    echo $message.PHP_EOL;
+}
+
+/**
+ * FETCH last SDK version
+ */
+console_log('Fetching last Bref version');
+$package = json_decode(file_get_contents('https://repo.packagist.org/p2/bref/bref.json'), true);
+$versions = $package['packages']['bref/bref'];
+usort($versions, static function (array $a, array $b) {
+    return version_compare($b['version_normalized'], $a['version_normalized']);
+});
+$lastVersion = $versions[0]['version'];
+console_log('Last Bref version is '.$lastVersion);
+
+/**
+ * FETCH current generated version
+ */
+$config = json_decode(file_get_contents($rootDir . '/config.json'), true);
+$currentVersion = $config['latest_version'];
+
+console_log('Current generated version is '.$currentVersion);
+if (version_compare($currentVersion, $lastVersion, '>=')) {
+    console_log('Nothing to do.');
+    echo PHP_EOL, '::set-output name=last::same', PHP_EOL;
+
+    exit;
+}
+
+$config['latest_version'] = $lastVersion;
+\file_put_contents($rootDir . '/config.json', \json_encode($config, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES));
+
+echo PHP_EOL, '::set-output name=last::'.$lastVersion, PHP_EOL;
