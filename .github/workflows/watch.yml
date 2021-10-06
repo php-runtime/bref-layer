@@ -1,7 +1,6 @@
 name: Watch for changes
 
 on:
-  push:
   schedule:
     - cron: '23 1,7,14,20 * * *'
 
