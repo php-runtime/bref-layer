@@ -7,8 +7,10 @@ namespace Runtime\BrefLayer\Service;
  */
 class BrefRegionProvider
 {
+    private const JSON_REGIONS_URL = 'https://raw.githubusercontent.com/brefphp/bref/master/runtime/layers/regions.json';
+
     public function getAll(): array
     {
-        return json_decode(file_get_contents('https://raw.githubusercontent.com/brefphp/bref/master/runtime/layers/regions.json'), true);
+        return json_decode(file_get_contents(self::JSON_REGIONS_URL), true);
     }
 }
