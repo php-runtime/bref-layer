@@ -30,7 +30,7 @@ functions:
     website:
         handler: public/index.php
         layers:
-            - ${runtime-bref:php-80}
+            - ${runtime-bref:php-82}
         events:
             -   httpApi: '*'
 ```
@@ -42,6 +42,7 @@ Symfony applications. Anything the Runtime component supports.
 
 These are the available layers:
 
+- `${runtime-bref:php-82}`
 - `${runtime-bref:php-81}`
 - `${runtime-bref:php-80}`
 - `${runtime-bref:php-74}`
