@@ -2,22 +2,22 @@ name: Watch for changes
 
 on:
   schedule:
-    - cron: '22 1,7,14,20 * * *'
+    - cron: '* */8 * * *'
 
 jobs:
   bref:
     name: Update to latest Bref
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.0
+          php-version: 8.2
           coverage: none
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: main
           fetch-depth: 0
@@ -28,7 +28,7 @@ jobs:
 
       - name: Download dependencies
         if: ${{ steps.fetch_version.outputs.last != 'same' }}
-        uses: ramsey/composer-install@v1
+        uses: ramsey/composer-install@v2
 
       - name: Build images with latest version
         if: ${{ steps.fetch_version.outputs.last != 'same' }}
